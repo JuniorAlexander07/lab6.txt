@@ -1,0 +1,30 @@
+sudo apt update
+sudo apt install libpam-google-authenticator
+
+
+cd /etc/pam.d
+ls
+
+sudo nano sshd
+
+al final del archivo agregamos:
+auth required pam_google_authenticator.so
+
+cd /etc/ssh/
+sudo nano sshd_config
+y aquí tenemos que encontrar una entrada que debería estar comentada o si no la creamos: ChallengeResponseAuthentication yes
+Guardamos y salimos
+
+sudo systemctl restart sshd
+
+ahora vamos a conseguir el QR para autenticarnos con:
+google-authenticator
+
+ahora vamos a la aplicación Google autenticador desde nuestro celular y le damos a agregar un código y escaneamos el QR que debería de darme un código que cambia cada 30s
+
+
+ahora vamos a intentar logearnos al servidor con
+ssh usuario@ip_servidor
+y debería de pedir el código 
+
+
