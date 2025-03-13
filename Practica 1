@@ -1,0 +1,12 @@
+sudo apt install gnupg2 -y
+
+mkdir hola
+cd hola
+sudo nano open.txt
+sudo gpg2 --symmetric ~/hola/open.txt
+ls
+cat a open.txt
+cat open.txt.pgp
+rm open.txt
+sudo gpg2 --decrypt ~/hola/open.txt.gpg
+sudo gpg2 --output ~/hola/open.txt --decrypt ~/hola/open.txt.gpg
