@@ -1,0 +1,65 @@
+Cifrado con Gpg2 (GNU Privacy Guard) es una herramienta de cifrado basada en PGP (Pretty Good Privacy) que permite proteger la información mediante el uso de criptografía de clave pública y privada.
+
+Instalación: 
+sudo apt install gnupg2 -y
+
+una vez instalada vamos a crear un directorio
+mkdir hola
+ls
+cd hola
+
+dentro del directorio creamos un archivo de texto
+sudo nano open.txt
+
+dentro ponemos lo que sea. Ejemplo:
+clave secreta
+
+guardamos y salimos
+
+ls para ver si el archivo se creo
+
+ahora vamos a cifrar el archivo con:
+sudo gpg2 --symmetric ~/hola/open.txt
+
+nos pedirá una contraseña, ponemos cualquiera:
+1234567890
+Abajo Repetimos la contraseña para confirmar 
+1234567890
+
+Le damos enter y ya se debió haber cifrado con éxito.
+
+Le damos un ls para ver el archivo cifrado
+ls
+
+ahora le damos un cat a open.txt
+cat open.txt
+
+y veremos el contenido que le pusimos “clave secreta”
+
+ahora le damos cat a open.txt.gpg
+cat open.txt.gpg
+
+nos lanzara la información de forma cifrada e ilegible
+
+ahora vamos a borrar el archivo open.txt
+rm open.txt
+
+para verificar que solo quedo el archivo gpg 
+ls
+
+ahora vamos a desencriptar el archivo gpg con:
+sudo gpg2 --decrypt ~/hola/open.txt.pgp
+nos saldrá una información de que hemos desencriptado el archivo y abajo aparecerá nuestra clave “clave secreta”
+
+ahora si queremos descifrarlo de una forma completa donde el archivo gpg se descifre y se cree otro archivo desencriptado usamos el siguiente comando:
+
+sudo gpg2 --output ~/hola/open.txt --decrypt ~/hola/open.txt.pgp
+
+ahora le vamos a dar un ls
+
+y veremos que el archivo gpg se desencripto y creo un archivo nuevo desencriptado con la clave dentro de ese nuevo archivo, en este caso el archivo se llama “open.txt” como el que borramos previamente.
+
+Vamos a darle un cat
+cat open.txt
+ 
+y nos mostrara el contenido descifrado del archivo gpg.
