@@ -1,0 +1,81 @@
+instalamos autenticador:
+
+sudo apt update
+sudo apt install libpam-google-authenticator
+
+ahora vamos al directorio pam:
+cd /etc/pam.d
+
+para ver todos los procesos que usa pam para el autenticador
+ls
+
+editamos el archivo de conf ssh con:
+sudo nano sshd
+
+al final del archivo agregamos:
+auth required pam_google_authenticator.so
+
+guardar y salir
+
+ahora vamos a dirigirnos aqui:
+cd /etc/ssh/
+
+editamos lo siguiente:
+sudo nano sshd_config
+
+y aquí tenemos que encontrar una entrada que debería estar comentada o si no la creamos: PermitRootLogin yes
+control+w
+
+si no se encuentra busca la linea: #PermitRootLogin prohibit-password
+la descomentamos y la dejamos asi: PermitRootLogin yes
+y debajo de esa linea ponemos ChallengeResponseAuthentication yes
+
+deberia quedar asi:
+PermitRootLogin yes
+ChallengeResponseAuthentication yes
+
+Guardamos y salimos
+
+reiniciamos el servicio para guardar cambios:
+sudo systemctl restart sshd
+
+verifica si el servicio esta levantado
+sudo systemctl status sshd
+
+ahora vamos a conseguir el QR para autenticarnos con:
+google-authenticator
+
+le ponemos yes
+
+ahora vamos a la aplicación Google autenticador desde nuestro celular y le damos a agregar un código y escaneamos el QR que debería de darme un código que cambia cada 30s
+
+ahora tenemos que poner el codigo que nos sale el en celular en la maquina linux
+
+nos saldra unos codigos de emergencia por si perdemos nuestro celular ingresar con ellos
+luego le ponemos yes a todo lo que nos pregunte
+
+ahora vamos a intentar logearnos al servidor con
+ssh alexander@192.168.100.115
+
+en caso de que entre sin pedir contraseña es por las llaves, vamos a deshabilitarlas
+sudo nano /etc/ssh/sshd_config
+
+buscas las lineas 
+PasswordAuthentication no
+PubkeyAuthentication yes
+kbdInteractiveAuthentication yes
+
+y ponlas asi:
+PasswordAuthentication yes
+PubkeyAuthentication no
+kbdInteractiveAuthentication no
+
+guardar y salir
+
+reinicia el servicio ssh
+sudo systemctl restart sshd
+
+ahora vamos a intentar logearnos al servidor con
+ssh alexander@192.168.100.115
+
+y debería de pedir primero la contraseña y despues el código 
