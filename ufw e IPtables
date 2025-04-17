@@ -1,0 +1,148 @@
+empezemos instalando iptables:
+
+sudo apt install vsftpd -y 
+
+probemos la conexion ssh, abrimos el cmd y nos logueamos mediante ssh
+ssh alexander@192.168.100.x
+
+una vez ya dentro cerramos sesion
+exit
+
+volvemos a nuestra maquina linux
+
+verifivamos si el servicio apache esta funcionando yendo a fire fox y poniendo 
+127.0.0.1
+
+(en caso de que no este instalado el apache2)
+
+sudo apt update 
+sudo apt install apache2
+sudo systemctl enable apache2
+sudo systemctl start apache2
+sudo systemctl status apache2
+
+entramos a este directorio que es donde haremos nuestro archivo de conf:
+cd /var/www/html
+ls
+
+si esta un archivo de conf por defecto es una plantilla, eliminala:
+sudo rm index.html
+
+crea tu propio archivo de conf:
+sudo nano index.html
+
+dentro pega lo siguiente:
+
+<html>
+<body>
+<h1> Hola mundo </h1>
+</body>
+</html>
+
+guardar y salir
+
+entramos al siguiente directorio:
+cd /etc/apache2
+ls
+cd sites-available
+
+aqui crearemos un archivo:
+sudo nano practica1.conf
+
+pegamos lo siguiente
+
+<VirtualHost *:80>
+    ServerName practica1.local
+    DocumentRoot /var/www/html/
+
+    <Directory /var/www/html/>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+guardamos y salimos.
+
+entramos al siguiente directorio:
+
+cd /etc/apache2
+
+entramos al archivo de conf:
+sudo nano ports.conf
+
+lo ponemos que escuche en el puerto 80:
+Listen 80
+
+guardar y salir.
+
+entramos al siguiente archivo de conf:
+sudo nano /etc/hosts
+
+Donde dice host.local cambialo por practica1.local
+guardar y salir.
+
+reiniciamos el servicio para que se apliquen los cambios:
+systemctl restart apache2
+
+habilitar el website:
+sudo a2ensite practica1.conf
+
+ve al navegador de firefox y pon en la url
+127.0.0.1
+
+despues de comprobar lo de apache2 lo siguiente es bloquear los puertos 80,21,22
+
+Para bloquear los puertos:
+Entrada:
+sudo iptables -A INPUT -p tcp --dport 80 -j REJECT
+sudo iptables -A INPUT -p tcp --dport 21 -j REJECT 
+sudo iptables -A INPUT -p tcp --dport 22 -j REJECT
+
+salida:
+sudo iptables -A OUTPUT -p tcp --dport 80 -j REJECT
+sudo iptables -A OUTPUT -p tcp --dport 21 -j REJECT 
+sudo iptables -A OUTPUT -p tcp --dport 22 -j REJECT 
+
+sudo iptables -L
+
+puedes intentar hacer conexion ssh y volver a la pagina web desde fire fox para validar que los puertos estan bloqueados.
+
+Ahora para eliminar las reglas ponemos 
+Entrada:
+sudo iptables -D INPUT -p tcp --dport 80 -j REJECT
+sudo iptables -D INPUT -p tcp --dport 21 -j REJECT 
+sudo iptables -D INPUT -p tcp --dport 22 -j REJECT
+
+salida:
+sudo iptables -D OUTPUT -p tcp --dport 80 -j REJECT
+sudo iptables -D OUTPUT -p tcp --dport 21 -j REJECT 
+sudo iptables -D OUTPUT -p tcp --dport 22 -j REJECT 
+
+sudo iptables -L 
+
+esto deberia permitir nuevamente los puertos. Puedes probar si funciona nuevamente con los servicios shh y apache
+
+
+ahora haremos lo mismo pero:
+
+utilizando ufw
+
+sudo apt install ufw 
+
+sudo ufw status verbose
+sudo ufw enable 
+sudo ufw status verbose
+
+ y Para negarle el accesso a los puertos ponemos: 
+sudo ufw deny 21/tcp 
+sudo ufw deny 22/tcp 
+sudo ufw deny 80/tcp
+
+ y para permitirlo es
+ sudo ufw allow 21/tcp
+ sudo ufw allow 22/tcp
+ sudo ufw allow 80/tcp
+
+
+sudo ufw status
+
