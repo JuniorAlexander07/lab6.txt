@@ -1,0 +1,72 @@
+1. Instalar Snort en Kali Linux
+sudo apt update && sudo apt install snort -y
+
+comprobar version (opcional)
+snort -v
+
+2. Crear Reglas de Detección
+sudo nano /etc/snort/rules/local.rules
+
+# Detectar tráfico ICMP (Ping) pondremos esto en el archivo de conf:
+
+alert icmp any any -> any any (msg:"ICMP Detectado"; itype:8; sid:1000001;)
+
+# Detectar tráfico al puerto 21 (FTP)
+alert tcp any any -> any 21 (msg:"FTP Detectado"; flags:S; sid:1000002;)
+
+# Detectar tráfico al puerto 22 (SSH)
+alert tcp any any -> any 22 (msg:"SSH Detectado"; flags:S; sid:1000003;)
+
+# Detectar tráfico al puerto 80 (HTTP)
+alert tcp any any -> any 80 (msg:"HTTP Detectado"; content:"GET"; sid:1000004;)
+
+guardamos y salimos
+
+ahora vamos a editar lo siguiente:
+
+Archivo de Configuración Principal
+sudo nano /etc/snort/snort.lua
+
+eliminar todo el contenido del archivo y solo agregamos lo siguiente:
+
+HOME_NET = '192.168.100.0/24'
+EXTERNAL_NET = 'any'
+ips = {
+    include = '/etc/snort/rules/local.rules',                 -- Carga reglas personalizadas
+    enable_builtin_rules = true                               -- Habilita reglas predefinidas
+}
+
+alert_fast = {
+    file = stdout,                                            -- Alertas en consola
+    packet = false                                            -- No incluir el paquete completo en el log
+}
+
+guardar y salir.
+
+3. Verifica que no haya errores:
+sudo snort -c /etc/snort/snort.lua --warn-all
+
+4. Ejecutar Snort en Modo de Detección
+sudo snort -c /etc/snort/snort.lua -i eth0 -A alert_fast
+
+5.Generar Tráfico de Prueba
+Desde otra máquina en la red, ejecuta los siguientes comandos:
+
+a) Prueba ICMP (Ping):
+desde el cmd haz ping # Ej: ping 192.168.100.1
+
+desde otra maquina virtual ejecuta el siguiente comando:
+
+b) Prueba SSH (Puerto 22):             
+ssh alexander@192.168.100.115  # Intento de conexión (usa credenciales incorrectas, falla los intentos para que los detecte snort)
+
+por si esta bloqueado el puerto ssh (opcional si solo esta bloqueado)
+sudo ufw allow 22/tcp
+
+desde la segunda maquina virtual ejecuta:
+
+c) Prueba HTTP (Puerto 80):
+curl http://192.168.100.115  # Solicitud HTTP GET
+
+d) Prueba FTP (Puerto 21):
+nmap -p 21 192.168.100.115  # Escaneo básico
