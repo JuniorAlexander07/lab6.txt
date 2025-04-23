@@ -70,3 +70,7 @@ curl http://192.168.100.115  # Solicitud HTTP GET
 
 d) Prueba FTP (Puerto 21):
 nmap -p 21 192.168.100.115  # Escaneo básico
+
+
+puedes bloquear puertos con:
+sudo ufw deny 22/tcp
