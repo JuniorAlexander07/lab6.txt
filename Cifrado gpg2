@@ -48,12 +48,12 @@ para verificar que solo quedo el archivo gpg
 ls
 
 ahora vamos a desencriptar el archivo gpg con:
-sudo gpg2 --decrypt ~/hola/open.txt.pgp
+sudo gpg2 --decrypt ~/hola/open.txt.gpg
 nos saldrá una información de que hemos desencriptado el archivo y abajo aparecerá nuestra clave “clave secreta”
 
 ahora si queremos descifrarlo de una forma completa donde el archivo gpg se descifre y se cree otro archivo desencriptado usamos el siguiente comando:
 
-sudo gpg2 --output ~/hola/open.txt --decrypt ~/hola/open.txt.pgp
+sudo gpg2 --output ~/hola/open.txt --decrypt ~/hola/open.txt.gpg
 
 ahora le vamos a dar un ls
 
